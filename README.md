@@ -12,7 +12,7 @@ brew install martinbavio/daydream/daydream
 
 Homebrew asks to trust the tap the first time; answer yes (or run `brew trust martinbavio/daydream` beforehand).
 
-Then start the host once with `daydream`, or keep it running across logins with `brew services start daydream`. It serves `~/Daydream` on `127.0.0.1:37326`. Upgrades: `brew upgrade daydream`.
+Then start the host once with `daydream`, or keep it running across logins with `brew services start daydream`. It serves `~/Daydream` on `127.0.0.1:37326`. Upgrades: `daydream update` (it runs brew for you and restarts the service).
 
 ## Connect your agent
 
