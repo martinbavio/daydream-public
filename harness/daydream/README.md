@@ -23,4 +23,4 @@ then `daydream` (or `brew services start daydream` to keep it running across log
 
 ## What you get
 
-The sixteen core tools (`canvas_url`, `canvas_state`, `get_viewport`, `replace_viewport`, `ingest`, `measure`, `lint`, `update_item`, `remove_item` and the seven `draft_*` tools), every tool the enabled plugins add, the knowledge tools when a plugin serves a corpus, and the `dream-author` skill: how to author a `.dream` document and land it, or rework a viewport already on the canvas.
+The nineteen core tools (`canvas_url`, `canvas_state`, `list_library`, `open_document`, `instructions`, `get_viewport`, `replace_viewport`, `ingest`, `measure`, `lint`, `update_item`, `remove_item` and the seven `draft_*` tools), every tool the enabled plugins add, the knowledge tools when a plugin serves a corpus, and the `dream-author` skill: how to author a `.dream` document and land it, or rework a viewport already on the canvas.
