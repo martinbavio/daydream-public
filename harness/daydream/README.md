@@ -7,9 +7,10 @@ Design tool for the web where real HTML/CSS is the grain. This plugin connects y
 Daydream must be installed and running:
 
 ```
-brew tap martinbavio/daydream https://github.com/martinbavio/daydream-public
-brew install daydream
+brew install martinbavio/daydream/daydream
 ```
+
+(Homebrew asks to trust the tap the first time; answer yes, or run `brew trust martinbavio/daydream` beforehand.)
 
 then `daydream` (or `brew services start daydream` to keep it running across logins). It serves `~/Daydream` on `127.0.0.1:37326`. The canvas must be open in a browser pane for the landing tools to answer; the agent gets the URL from `canvas_url`.
 
