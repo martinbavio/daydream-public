@@ -1,0 +1,13 @@
+{
+  "name": "daydream",
+  "displayName": "Daydream",
+  "version": "0.1.0",
+  "description": "Design tool for the web where real HTML/CSS is the grain: a canvas of viewports Cursor can read, land into and rework through MCP.",
+  "author": {
+    "name": "Daydream",
+    "email": "mbavio@photalabs.com"
+  },
+  "license": "UNLICENSED",
+  "keywords": ["cursor", "plugin", "mcp", "daydream", "design"],
+  "logo": "./assets/logo.svg"
+}

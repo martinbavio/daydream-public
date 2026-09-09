@@ -1,0 +1,14 @@
+{
+  "name": "daydream",
+  "version": "0.1.0",
+  "description": "Design tool for the web where real HTML/CSS is the grain: a canvas of viewports your agent can read, land into and rework through MCP.",
+  "author": {
+    "name": "Daydream",
+    "email": "mbavio@photalabs.com"
+  },
+  "homepage": "https://github.com/martinbavio/daydream-public",
+  "repository": "https://github.com/martinbavio/daydream-public",
+  "keywords": ["daydream", "design", "canvas", "html", "css", "layout", "mcp"],
+  "skills": "./skills",
+  "mcpServers": "./mcp.json"
+}

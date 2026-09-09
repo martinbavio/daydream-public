@@ -1,0 +1,30 @@
+{
+  "name": "daydream",
+  "version": "0.1.0",
+  "description": "Design tool for the web where real HTML/CSS is the grain: a canvas of viewports Codex can read, land into and rework through MCP.",
+  "author": {
+    "name": "Daydream",
+    "email": "mbavio@photalabs.com",
+    "url": "https://github.com/martinbavio/daydream-public"
+  },
+  "homepage": "https://github.com/martinbavio/daydream-public",
+  "repository": "https://github.com/martinbavio/daydream-public.git",
+  "keywords": ["daydream", "design", "canvas", "html", "css", "layout", "mcp"],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json",
+  "interface": {
+    "displayName": "Daydream",
+    "shortDescription": "A canvas of real HTML/CSS viewports your agent lands into.",
+    "longDescription": "Daydream is a design tool for the web where real HTML/CSS is the grain. With this plugin, Codex reads the canvas, lands new viewports, reworks existing ones and builds them piece by piece as drafts — every landing judged by the format validator and the enabled plugins' gates, answered with measured findings. The host runs on your machine; nothing leaves it.",
+    "developerName": "Daydream",
+    "category": "Design",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/martinbavio/daydream-public",
+    "logo": "./assets/logo.svg",
+    "defaultPrompt": [
+      "Land a three-column grid playground on my Daydream canvas",
+      "Transcribe this article's layout technique into my Daydream library",
+      "Explain what makes the selected viewport's layout work"
+    ]
+  }
+}
