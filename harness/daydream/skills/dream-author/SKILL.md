@@ -78,7 +78,7 @@ Paper) the first turn holds TWO calls, in parallel, the open first:
   written — do not hold a finished page back to append it all at once.
 - `knowledge_bundle {query}` — when the knowledge tools are listed — the
   task in a few words ("card grid", "sticky sidebar") — returns in ONE
-  call `format.md` (the .dream v5 shape and the rules the gates enforce)
+  call `format.md` (the .dream v6 shape and the rules the gates enforce)
   and the example nearest the task; `examples: 2` or `3` when the task
   spans techniques. Read the procedures the enabled plugins serve from
   the same call or from `knowledge_read` (the index names them): which
