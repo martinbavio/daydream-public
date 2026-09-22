@@ -20,7 +20,7 @@ Five ways in, one format, one landing (explain lands nothing):
 - **Explain** — a viewport already on the canvas, read and explained; the
   one mode that lands nothing.
 
-This file is Daydream's own workflow (decisions.md #65): the Daydream MCP
+This file is Daydream's own workflow (decision #65): the Daydream MCP
 server serves its marked section as the `dream-author` prompt, so a
 client with no skills gets the same steps. The format rules are core's
 (`knowledge/format.md` — the server's own instructions on every
