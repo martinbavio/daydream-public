@@ -62,14 +62,14 @@ you have to read for: for a fresh document (transcribe, from intent,
 Paper) the first turn holds TWO calls, in parallel, the open first:
 
 - `draft_open` — `frame` (the source's width, else 960), the `title` in
-  `meta`, the `fonts`, and `root`: the `html › body` skeleton carrying the
-  root-level styles only (page background, font, colour) and no content
-  yet. The page background is NOT optional: the format rules put it on
-  `html`; send it in this first call and keep it through every later
-  change of the root — a page that declares none paints whatever the
-  canvas shows through, and reads as a page with no background while it
-  builds. Its answer is the draft id and the skeleton with its ids; hold
-  both, every later call addresses them. Give it an `outline` — the
+  `meta`, `html`: the page's skeleton, an empty `<body>` and no content
+  yet, and `css`: the page-level rules only (the `html` background, the
+  font stack, colour, any `@font-face`). The page background is NOT
+  optional: send it in this first call and keep it through every later
+  change — a page that declares none paints whatever the canvas shows
+  through, and reads as a page with no background while it builds. Its
+  answer is the draft id; every later call names elements by CSS
+  selector (`body` for the first section). Give it an `outline` — the
   section names you will append, short, in order — and name the matching
   `section` on each `draft_append`: that is what the canvas shows the
   user as progress. Each answer's `next` goes back as `token` on your
@@ -78,7 +78,7 @@ Paper) the first turn holds TWO calls, in parallel, the open first:
   written — do not hold a finished page back to append it all at once.
 - `knowledge_bundle {query}` — when the knowledge tools are listed — the
   task in a few words ("card grid", "sticky sidebar") — returns in ONE
-  call `format.md` (the .dream v6 shape and the rules the gates enforce)
+  call `format.md` (the .dream v7 shape and the rules the gates enforce)
   and the example nearest the task; `examples: 2` or `3` when the task
   spans techniques. Read the procedures the enabled plugins serve from
   the same call or from `knowledge_read` (the index names them): which
@@ -94,7 +94,7 @@ relative to existing content — then it joins that first turn beside the
 bundle, and the rework's `draft_open` follows once the id is known. The
 format rules come with the server's instructions on every connection —
 do not read them again. The format file cites `src/core/types.ts` and
-`src/core/content.ts` as the model; if the code and the file disagree,
+`src/core/pagePayload.ts` as the model; if the code and the file disagree,
 **the repo wins** — report the drift. `knowledge_index` /
 `knowledge_search` / `knowledge_read` are for more (reference files,
 another example; paths are `<plugin id>/<file>`), not for Step 0.
@@ -111,9 +111,9 @@ one example in the neighborhood of the task.
   strip decoration. How many viewports the source becomes is `format.md`'s
   call (its authoring guidance) — apply it, do not decide it here; each
   is its own draft. Several unrelated techniques: ask which, unless the
-  user said "all of it". Keep the source's conditions verbatim, record
-  the URL as `sourceUrl`, and skip `canvas_state` — the kernel picks
-  free space for the draft.
+  user said "all of it". Keep the source's at-rules (`@media`,
+  `@container`, `@supports`) verbatim, record the URL as `sourceUrl`,
+  and skip `canvas_state` — the kernel picks free space for the draft.
 - **From intent.** No source, no `sourceUrl`, no `canvas_state`. Pick the
   smallest document in which the idea is manipulable: which knob is the
   point, what to drag first, what should visibly break. Tell the user in
@@ -122,16 +122,16 @@ one example in the neighborhood of the task.
   screenshot: `get_guide({topic: "paper-mcp-instructions"})` once per
   session, then `get_basic_info`, `get_selection`, `find_nodes` /
   `get_tree_summary`, and `get_node_info` + `get_computed_styles` (or
-  `get_jsx`) for exact values; resolve `get_tokens` to real CSS — .dream has
-  no variables layer. Translate, don't transfer: absolute canvas positions
+  `get_jsx`) for exact values; resolve `get_tokens` to real CSS — the
+  page's css may keep them as custom properties. Translate, don't transfer: absolute canvas positions
   become real grid/flex with the same visual result, the artboard width
   becomes `frame.width`. Name the Paper file in the viewport `title`.
 - **Rework.** `canvas_state` (same turn as the bundle) for the viewport
   ids, titles and the selection; then `draft_open {from: id}` for the one
-  to change — its answer is that viewport's complete document, ids
-  included, so `get_viewport` is not needed, and from then until Step 3
-  the canvas displays your draft where that viewport stood. Change only
-  what was asked; keep the rest verbatim, ids included.
+  to change — from then until Step 3 the canvas displays your draft where
+  that viewport stood. Its answer is `seeded`, not the text: read it with
+  `get_viewport {id}` (one section by selector with `element`). Change
+  only what was asked; keep the rest verbatim.
 - **Explain.** `canvas_state` (same turn as the bundle) to find the
   viewport (the selection, or the one the user named), `get_viewport {id}`
   for its exact document, `measure` for the browser's geometry and
@@ -150,18 +150,19 @@ declaration is needed at all, where in the cascade it goes. Without
 them, the format rules are the whole of the law.
 
 Build in the draft, one visual group per `draft_append` — the header, one
-card, the row that holds the cards, the footer — each under its parent id
-(`before` a sibling when it belongs ahead of one); never the whole page
-in one call, and no group before the procedures (when you have them)
-have judged it. The
-answer lists the ids the kernel minted for the subtree: use those as the
-parents of what comes next. Root-level things — frame, meta, fonts, the
-root's style map (sent whole, never merged) — go through `draft_set`. In
-a rework, `draft_replace {target}` swaps the subtree you were asked to
-change, `draft_append` inserts what is missing, `draft_remove` deletes
-what goes — and everything else stays as pulled. A call the kernel refuses
-with a finding (a bad element, an id already used) is repaired and sent
-again; the gates do not judge the draft until Step 3.
+card, the row that holds the cards, the footer — its markup under its
+`parent` selector (`before` a sibling when it belongs ahead of one) and
+its rules as `css` in the same call; never the whole page in one call,
+and no group before the procedures (when you have them) have judged it.
+The answer names each element it added by a selector: give a group an
+`id` or a class of its own, and address it by that from then on. In a
+rework, `draft_edit`
+changes a declaration, a rule or an attribute in place, `draft_replace
+{target}` swaps an element you were asked to rebuild, `draft_append`
+inserts what is missing, `draft_remove` deletes what goes — and
+everything else stays as pulled. A call the kernel refuses with a
+finding (a selector matching none or several, css left open) is repaired
+and sent again; the gates do not judge the draft until Step 3.
 
 ### Step 3 — Finalize (the gates run there)
 
@@ -173,7 +174,7 @@ a call — is in the server's instructions, as they say it, not here. After
 the format gate, the enabled plugins' gates judge the finalize; each
 plugin's own section of the server's instructions says what its gates
 look for. A refusal changes nothing in the draft: repair what the
-findings name (`draft_replace` on those elements) and call
+findings name (`draft_edit` or `draft_replace` on those elements) and call
 `draft_finalize` once more. No plugin gate runs without the canvas open
 in a browser (`canvas_url`) — open it there if it is not. Reference media
 (images, videos) still land through `ingest`, one item per call, each as
@@ -191,9 +192,10 @@ http://127.0.0.1:<port>/api/ingest -H 'content-type: application/json'
   same measure report; `422 {"landed":false,"findings"}` is the same
   refusal as the tool — fix every finding and POST again; `503` means no
   canvas tab is connected — open the app and retry.
-- **No host at all:** write `library/<slug>.dream` (pretty JSON; slug
-  `[A-Za-z0-9_-]`, 64 chars max, from the technique's name). Positions are
-  honored here. Tell the user the path: a brand-new file is opened through
+- **No host at all:** write `library/<slug>.dream` as one JSON file, a
+  version 7 document with each page's `html` and `css` inline (slug
+  `[A-Za-z0-9_-]`, 64 chars max, from the technique's name); the app
+  makes it a folder on its first save. Positions are honored here. Tell the user the path: a brand-new file is opened through
   "Open…" or by starting the host and landing it live.
 
 A live landing appends to the open document (one undo step), remaps every
