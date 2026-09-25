@@ -192,13 +192,13 @@ http://127.0.0.1:<port>/api/ingest -H 'content-type: application/json'
   same measure report; `422 {"landed":false,"findings"}` is the same
   refusal as the tool — fix every finding and POST again; `503` means no
   canvas tab is connected — open the app and retry.
-- **No host at all:** write `<slug>.dream` as one JSON file, a version 7
-  document with each page's `html` and `css` inline (slug
-  `[A-Za-z0-9_-]`, 64 chars max, from the technique's name), in the
-  project folder — never inside `library/`, where a document is a folder
-  the app writes and a single file is refused. Tell the user the path:
-  it is opened through "Open…", which imports it into the library, or
-  landed live once the host is started. Positions are honored here.
+- **No host at all:** write the document as a `<slug>.dream/` folder,
+  laid out as `knowledge/format.md` "On disk" says (slug
+  `[A-Za-z0-9_-]`, from the technique's name), in the project folder,
+  never inside `library/`. Tell the user the path: on macOS "Open…"
+  copies it into the library; elsewhere they copy it into the library
+  folder by hand; or it lands live once the host is started. Positions
+  are honored here.
 
 A live landing appends to the open document (one undo step), remaps every
 id, re-places every viewport and drops canvas-level meta; the open document
