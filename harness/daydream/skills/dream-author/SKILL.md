@@ -196,9 +196,10 @@ http://127.0.0.1:<port>/api/ingest -H 'content-type: application/json'
   laid out as `knowledge/format.md` "On disk" says (slug
   `[A-Za-z0-9_-]`, from the technique's name), in the project folder,
   never inside `library/`. Tell the user the path: on macOS "Open…"
-  copies it into the library; elsewhere they copy it into the library
-  folder by hand; or it lands live once the host is started. Positions
-  are honored here.
+  copies it into the library (any folder holding a format 7
+  `manifest.json` of its own opens, whatever its name); elsewhere they
+  copy it into the library folder by hand, as `<slug>.dream/`; or it
+  lands live once the host is started. Positions are honored here.
 
 A live landing appends to the open document (one undo step), remaps every
 id, re-places every viewport and drops canvas-level meta; the open document
