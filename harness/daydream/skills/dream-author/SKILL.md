@@ -36,9 +36,10 @@ it is on. Nothing here restates any of them.
 
 Look at your tool list for the Daydream server (usually `daydream`). If
 its tools are not listed at all, the MCP server is not connected — STOP
-and tell the user. Installed Daydream: start the host (`daydream`, or
-`brew services start daydream`) and register it with this harness
-(`daydream connect`), then reconnect. A Daydream checkout: the project's
+and tell the user. Installed Daydream: open the Daydream app, or start
+the host (`daydream`, or `brew services start daydream`), and register it
+with this harness (the app's Daydream > Connect Agents…, or `daydream
+connect`), then reconnect. A Daydream checkout: the project's
 `.mcp.json` / `.cursor/mcp.json` / `.codex/config.toml` name the dev host
 (`daydream-dev`); `pnpm dev` starts it. Do not author a document from
 memory.
@@ -195,8 +196,8 @@ canvas follows the files, so a moment after you write one, what you check
 is what you wrote. `lint` runs the enabled plugins' gates over the
 project's pages and `measure` reports the browser's geometry; repair what
 their findings name in the files, and check again. No plugin gate runs
-without the canvas open in a browser (`canvas_url`) — open it there if it
-is not.
+without the canvas open — the Daydream app's window, or `canvas_url` in a
+browser — so open it if it is not.
 
 ### Step 4 — Without the MCP server
 
