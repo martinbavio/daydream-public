@@ -34,15 +34,22 @@ it is on. Nothing here restates any of them.
 
 ## Check first
 
-Look at your tool list for the Daydream server (usually `daydream`). If
-its tools are not listed at all, the MCP server is not connected — STOP
-and tell the user. Installed Daydream: open the Daydream app, or start
-the host (`daydream`, or `brew services start daydream`), and register it
-with this harness (the app's Daydream > Connect Agents…, or `daydream
-connect`), then reconnect. A Daydream checkout: the project's
-`.mcp.json` / `.cursor/mcp.json` / `.codex/config.toml` name the dev host
-(`daydream-dev`); `pnpm dev` starts it. Do not author a document from
-memory.
+Look at your tool list for the Daydream server. Inside a Daydream
+checkout (the Daydream repository itself) it is the dev host's,
+`daydream-dev`, which the project's `.mcp.json` / `.cursor/mcp.json` /
+`.codex/config.toml` name; anywhere else it is `daydream`. If its tools
+are not listed but you can run shell commands, run `daydream tool`: it
+lists the same tools, and each one is a command (Step 4). In a checkout,
+give it the dev host's port — `daydream tool --port <port>` (or `pnpm
+host tool --port <port>` after `pnpm host:build`), the `port` in the
+checkout's `.daydream/host.json`, there while `pnpm dev` runs — never
+its default port, which is the installed app's host, not this one. If
+neither works, Daydream is not reachable — STOP and tell the user. A
+checkout: `pnpm dev` starts the dev host. Installed Daydream: open the
+Daydream app, or start the host (`daydream`, or `brew services start
+daydream`), and register it with this harness (the app's Daydream >
+Connect Agents…, or `daydream connect`), then reconnect. Do not author a
+document from memory.
 
 <!-- workflow:start -->
 
@@ -201,10 +208,22 @@ browser — so open it if it is not.
 
 ### Step 4 — Without the MCP server
 
-Write the page's files into the project folder yourself, and tell the
-user their paths: the host shows them on the canvas once the folder is
-opened (a click on the mark, or `daydream <folder>`), and follows each
-change to them after.
+Every tool this skill names is also a command, for an agent with a shell
+and no MCP client: `daydream tool` lists them, `daydream tool <name>
+--help` shows one's inputs, and `daydream tool <name> key=value …` calls
+it and prints its result — `daydream tool canvas_state`, `daydream tool
+lint`, `daydream tool get_viewport id=<id>`. A value is read by the
+tool's inputs: text for a string, JSON for a number, a list or an
+object; `--input '<json>'` gives the whole argument object. Exit 1 is
+the tool's own error, as the MCP tool would answer it; exit 2 is
+anything else, said in one line on stderr — most often no Daydream
+running (ask the user to open the Daydream app). Use it wherever this
+skill says to call a tool.
+
+Without the command either, write the page's files into the project
+folder yourself, and tell the user their paths: the host shows them on
+the canvas once the folder is opened (a click on the mark, or `daydream
+<folder>`), and follows each change to them after.
 
 ### Step 5 — Report
 

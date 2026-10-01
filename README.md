@@ -16,7 +16,7 @@ Then start the host once with `daydream`, or keep it running across logins with 
 
 ## Connect your agent
 
-`daydream connect` registers the host with every agent harness on this machine — Claude Code, Codex, Cursor, VS Code — and links the `dream-author` skill. Or install the plugin through a harness's own marketplace:
+`daydream connect` registers the host with every agent harness on this machine it knows — Claude Code, Codex, Cursor, OpenCode, Pi, VS Code — and links the `dream-author` skill. Any other agent with a shell reaches the same tools as commands: `daydream tool` lists them. Or install the plugin through a harness's own marketplace:
 
 - Claude Code: `claude plugin marketplace add martinbavio/daydream-public` then `claude plugin install daydream@daydream`
 - Codex: `codex plugin marketplace add martinbavio/daydream-public` then `codex plugin add daydream@daydream`

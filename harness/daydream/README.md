@@ -19,7 +19,8 @@ then `daydream` (or `brew services start daydream` to keep it running across log
 - Claude Code: `claude plugin marketplace add martinbavio/daydream-public` then `claude plugin install daydream@daydream`
 - Codex: `codex plugin marketplace add martinbavio/daydream-public` then `codex plugin add daydream@daydream`
 - Cursor: through its marketplace once published; until then `daydream connect`
-- Or, instead of the plugin: `daydream connect` registers the host with every harness on this machine and links the skill. One or the other per harness — both would register the same server twice. `connect` is also the one way to register a host started with `--token`, since this plugin's `mcp.json` is a static copy and cannot carry a secret.
+- Or, instead of the plugin: `daydream connect` registers the host with every harness on this machine it knows (Claude Code, Codex, Cursor, OpenCode, Pi, VS Code) and links the skill. One or the other per harness — both would register the same server twice. `connect` is also the one way to register a host started with `--token`, since this plugin's `mcp.json` is a static copy and cannot carry a secret.
+- Any other agent that can run shell commands: `daydream tool` lists Daydream's tools and `daydream tool <name> key=value …` calls one; the dream-author skill tells it how. An agent that speaks MCP can also be pointed at `http://127.0.0.1:37326/mcp` by hand.
 
 ## What you get
 
