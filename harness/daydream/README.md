@@ -1,6 +1,6 @@
 # Daydream
 
-Design tool for the web where real HTML/CSS is the grain. This plugin connects your agent harness to the Daydream host running on your machine: its MCP tools (see, land, arrange, draft) and the `dream-author` skill.
+Design tool for the web where real HTML/CSS is the grain. This plugin connects your agent harness to the Daydream host running on your machine: its MCP tools (see, arrange, draft, measure, lint) and the `dream-author` skill.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ brew install martinbavio/daydream/daydream
 
 (Homebrew asks to trust the tap the first time; answer yes, or run `brew trust martinbavio/daydream` beforehand.)
 
-then `daydream` (or `brew services start daydream` to keep it running across logins). It serves `~/Daydream` on `127.0.0.1:37326`. The canvas must be open in a browser pane for the landing tools to answer; the agent gets the URL from `canvas_url`.
+then `daydream` (or `brew services start daydream` to keep it running across logins). It serves on `127.0.0.1:37326`, with the last project you opened open again (`daydream <folder>` opens a folder; a click on the Daydream mark picks one). The canvas must be open in a browser pane for the canvas tools to answer; the agent gets the URL from `canvas_url`.
 
 ## Install
 
@@ -23,4 +23,4 @@ then `daydream` (or `brew services start daydream` to keep it running across log
 
 ## What you get
 
-The twenty core tools (`canvas_url`, `canvas_state`, `list_library`, `open_document`, `instructions`, `get_viewport`, `replace_viewport`, `ingest`, `measure`, `lint`, `update_item`, `remove_item` and the eight `draft_*` tools), every tool the enabled plugins add, the knowledge tools when a plugin serves a corpus, and the `dream-author` skill: how to author a `.dream` document and land it, or rework a viewport already on the canvas.
+The seventeen core tools (`canvas_url`, `canvas_state`, `instructions`, `get_viewport`, `measure`, `lint`, `update_item`, `remove_item`, the eight `draft_*` tools and `resolve_variant`), every tool the enabled plugins add, the knowledge tools when a plugin serves a corpus, and the `dream-author` skill: how to author a page of the open project, or rework a viewport already on the canvas.

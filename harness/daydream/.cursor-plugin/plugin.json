@@ -2,7 +2,7 @@
   "name": "daydream",
   "displayName": "Daydream",
   "version": "0.1.0",
-  "description": "Design tool for the web where real HTML/CSS is the grain: a canvas of viewports Cursor can read, land into and rework through MCP.",
+  "description": "Design tool for the web where real HTML/CSS is the grain: a canvas of viewports Cursor can read, arrange and draft pages on through MCP, over the pages of the project folder it has open.",
   "author": {
     "name": "Daydream",
     "email": "mbavio@photalabs.com"

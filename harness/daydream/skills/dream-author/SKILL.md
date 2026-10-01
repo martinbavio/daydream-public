@@ -1,24 +1,28 @@
 ---
 name: dream-author
-description: Author a playable .dream document for Daydream and land it on the user's canvas, or refine and rework a viewport already on the canvas. Use whenever the user shares layout source material (a URL, article, or CSS snippet), asks to transcribe or replicate a technique into their library, names a pattern to play with ("Holy Grail layout", "RAM pattern"), asks for a layout playground built from scratch ("make me a three-column grid to poke at"), wants a design they have open in Paper turned into something editable, asks to change, fix or rework a viewport that is already open, or asks to have a viewport on the canvas explained ("what makes this layout work?") — even if they don't say ".dream" or "Daydream".
+description: Author a playable page for Daydream — an html file (and its stylesheet) in the open project, shown on the user's canvas — or refine and rework a viewport already on the canvas. Use whenever the user shares layout source material (a URL, article, or CSS snippet), asks to transcribe or replicate a technique into their project, names a pattern to play with ("Holy Grail layout", "RAM pattern"), asks for a layout playground built from scratch ("make me a three-column grid to poke at"), wants a design they have open in Paper turned into something editable, asks to change, fix or rework a viewport that is already open, or asks to have a viewport on the canvas explained ("what makes this layout work?") — even if they don't say "page" or "Daydream".
 ---
 
 # dream-author
 
-Turn layout knowledge into playable `.dream` documents. The output is a
-learning artifact: the user opens it in Daydream, selects elements, and plays
+Turn layout knowledge into playable pages: html files of the open
+project, with their stylesheets. The output is a learning artifact: the
+user sees it on the Daydream canvas, selects elements, and plays
 with the layout via the style panel. Optimize for _instructive to
 manipulate_, not for visual fidelity to the source.
 
-Five ways in, one format, one landing (explain lands nothing):
+Six ways in, one format, one project (explain writes nothing):
 
 - **Transcribe** — a URL, article, or CSS snippet.
 - **From intent** — "a three-column grid playground", no source.
 - **Paper → Daydream** — a design open in Paper, read via its MCP.
-- **Rework** — a viewport already on the canvas, reopened as a draft,
-  changed, finalized.
+- **Rework** — a viewport already on the canvas: its page's files
+  changed, directly or through a draft that writes back only what
+  changed.
+- **Variants** — alternatives of a viewport already on the canvas, each
+  a copy kept beside it until the user picks one.
 - **Explain** — a viewport already on the canvas, read and explained; the
-  one mode that lands nothing.
+  one mode that writes nothing.
 
 This file is Daydream's own workflow (decision #65): the Daydream MCP
 server serves its marked section as the `dream-author` prompt, so a
@@ -43,7 +47,7 @@ memory.
 
 ## Workflow
 
-The tool discipline — what a landing answers with, how a finding is
+The tool discipline — what a tool answers with, how a finding is
 treated, what the reply is made of — is the server's instructions (the
 "Core tools" section, on every connection) and is not restated here; this
 workflow adds the steps. One rule of its own holds through every step:
@@ -53,13 +57,16 @@ workflow adds the steps. One rule of its own holds through every step:
 
 ### Step 0 — Open the draft and sync with truth (one turn, never skip)
 
-Every viewport you author is a DRAFT the user watches grow, group by
-group — never a finished page revealed at the end. The user's first
+Two ways reach the project's files: a DRAFT, which the user watches grow
+group by group on the canvas until `draft_finalize` writes it, and your
+own file tools, for a change you can make in a few exact edits. A NEW page
+is always built in a draft: never a finished page revealed at the end,
+and never a half-built file sitting in the user's site. The user's first
 signal that work started is the empty frame on their canvas, so
 `draft_open` is the FIRST call you make — before the bundle, before any
 resource or knowledge file, before you plan the page. It needs nothing
-you have to read for: for a fresh document (transcribe, from intent,
-Paper) the first turn holds TWO calls, in parallel, the open first:
+you have to read for: for a fresh page (transcribe, from intent, Paper)
+the first turn holds TWO calls, in parallel, the open first:
 
 - `draft_open` — `frame` (the source's width, else 960), the `title` in
   `meta`, `html`: the page's skeleton, an empty `<body>` and no content
@@ -78,14 +85,15 @@ Paper) the first turn holds TWO calls, in parallel, the open first:
   written — do not hold a finished page back to append it all at once.
 - `knowledge_bundle {query}` — when the knowledge tools are listed — the
   task in a few words ("card grid", "sticky sidebar") — returns in ONE
-  call `format.md` (the .dream v7 shape and the rules the gates enforce)
+  call `format.md` (a project's shape, format 8, and the rules the
+  renderer and the gates enforce)
   and the example nearest the task; `examples: 2` or `3` when the task
   spans techniques. Read the procedures the enabled plugins serve from
   the same call or from `knowledge_read` (the index names them): which
   formatting context, whether a declaration is needed at all, where in
   the cascade it goes. If no `knowledge_*` tool is listed, no enabled
   plugin has an opinion about layout: nothing but the format gate will
-  judge your landing, and no procedures exist for you to read. Say so
+  judge your pages, and no procedures exist for you to read. Say so
   to the user once, then go on by the format rules alone — the first
   turn is then `draft_open` by itself.
 
@@ -101,8 +109,9 @@ another example; paths are `<plugin id>/<file>`), not for Step 0.
 
 Without an MCP server: read `knowledge/format.md` and, from an enabled
 plugin's knowledge folder (`~/.daydream/plugins/<id>/knowledge/`, or the
-served project's `.daydream/plugins/<id>/knowledge/`), its procedures and
-one example in the neighborhood of the task.
+host's own folder's `.daydream/plugins/<id>/knowledge/` — never the open
+project's, which holds no plugins), its procedures and one example in the
+neighborhood of the task.
 
 ### Step 1 — Gather the source, by mode
 
@@ -127,11 +136,22 @@ one example in the neighborhood of the task.
   become real grid/flex with the same visual result, the artboard width
   becomes `frame.width`. Name the Paper file in the viewport `title`.
 - **Rework.** `canvas_state` (same turn as the bundle) for the viewport
-  ids, titles and the selection; then `draft_open {from: id}` for the one
-  to change — from then until Step 3 the canvas displays your draft where
-  that viewport stood. Its answer is `seeded`, not the text: read it with
+  ids, the page each shows and the selection. A change you can make in a
+  few exact edits you may make in the page's files directly; anything
+  the user should watch take shape goes through `draft_open {from: id}`
+  — from then until Step 3 the canvas displays your draft where that
+  viewport stood. Its answer is `seeded`, not the text: read it with
   `get_viewport {id}` (one section by selector with `element`). Change
   only what was asked; keep the rest verbatim.
+- **Variants.** When the user asks for alternatives of a page or a
+  section to compare — several directions, not one rework — open one
+  `draft_open {copyOf: id}` per direction, back to back, each at a
+  position beside the source, then write each copy as a rework is
+  written. Its finalize leaves the site alone: each lands beside its
+  source for the user to judge. To refine one, `draft_open {from: id}`
+  on the variant's own viewport: it reworks the variant, never its page.
+  End them with `resolve_variant` as the server's instructions say
+  ("Core tools", DRAFTS).
 - **Explain.** `canvas_state` (same turn as the bundle) to find the
   viewport (the selection, or the one the user named), `get_viewport {id}`
   for its exact document, `measure` for the browser's geometry and
@@ -156,61 +176,41 @@ its rules as `css` in the same call; never the whole page in one call,
 and no group before the procedures (when you have them) have judged it.
 The answer names each element it added by a selector: give a group an
 `id` or a class of its own, and address it by that from then on. In a
-rework, `draft_edit`
-changes a declaration, a rule or an attribute in place, `draft_replace
-{target}` swaps an element you were asked to rebuild, `draft_append`
-inserts what is missing, `draft_remove` deletes what goes — and
-everything else stays as pulled. A call the kernel refuses with a
-finding (a selector matching none or several, css left open) is repaired
-and sent again; the gates do not judge the draft until Step 3.
+rework, `draft_edit` changes the markup in place (an attribute, a
+text), `draft_replace {target}` swaps an element you were asked to
+rebuild, `draft_append` inserts what is missing (its `css` the rules to
+add), `draft_remove` deletes what goes — and everything else stays as
+pulled. A call the kernel refuses with a finding (a selector matching
+none or several, css left open) is repaired and sent again; the gates
+do not judge the draft until Step 3.
 
-### Step 3 — Finalize (the gates run there)
+### Step 3 — Write the files, then check them on the canvas
 
-When the draft is complete, `draft_finalize {draft}` — always: a draft is
-on the canvas only as a draft until then, and nothing else lands it. Its
-answer is what you report from. Everything about a landing — refusals and
-severities, the report it answers with, when `measure` or `lint` is worth
-a call — is in the server's instructions, as they say it, not here. After
-the format gate, the enabled plugins' gates judge the finalize; each
-plugin's own section of the server's instructions says what its gates
-look for. A refusal changes nothing in the draft: repair what the
-findings name (`draft_edit` or `draft_replace` on those elements) and call
-`draft_finalize` once more. No plugin gate runs without the canvas open
-in a browser (`canvas_url`) — open it there if it is not. Reference media
-(images, videos) still land through `ingest`, one item per call, each as
-it is ready — beside the draft, never inside it.
+Once every group is in, call `draft_finalize` on the whole page. On a
+blocking finding, repair what it names in the draft and finalize again;
+any other refusal says what to do next. Report from its answer.
 
-### Step 4 — Land without the MCP server
+An edit you made directly in the files is checked the same way: the
+canvas follows the files, so a moment after you write one, what you check
+is what you wrote. `lint` runs the enabled plugins' gates over the
+project's pages and `measure` reports the browser's geometry; repair what
+their findings name in the files, and check again. No plugin gate runs
+without the canvas open in a browser (`canvas_url`) — open it there if it
+is not.
 
-- **A host running:** find it — `curl -s --max-time 2
-http://127.0.0.1:37326/api/ping` (an installed Daydream; a checkout's dev
-  host answers on `localhost:5173`, or read `.daydream/host.json`) answers
-  `{"modules":[…,"agent"]}` — then `curl -s -X POST
-http://127.0.0.1:<port>/api/ingest -H 'content-type: application/json'
--d '{"dream": …, "position"?: {"x","y"}}'`:
-  `200 {"landed":true,"report":…,"text":…}` is on the canvas, with the
-  same measure report; `422 {"landed":false,"findings"}` is the same
-  refusal as the tool — fix every finding and POST again; `503` means no
-  canvas tab is connected — open the app and retry.
-- **No host at all:** write the document as a `<slug>.dream/` folder,
-  laid out as `knowledge/format.md` "On disk" says (slug
-  `[A-Za-z0-9_-]`, from the technique's name), in the project folder,
-  never inside `library/`. Tell the user the path: on macOS "Open…"
-  copies it into the library (any folder holding a format 7
-  `manifest.json` of its own opens, whatever its name); elsewhere they
-  copy it into the library folder by hand, as `<slug>.dream/`; or it
-  lands live once the host is started. Positions are honored here.
+### Step 4 — Without the MCP server
 
-A live landing appends to the open document (one undo step), remaps every
-id, re-places every viewport and drops canvas-level meta; the open document
-autosaves, so do not also write the file.
+Write the page's files into the project folder yourself, and tell the
+user their paths: the host shows them on the canvas once the folder is
+opened (a click on the mark, or `daydream <folder>`), and follows each
+change to them after.
 
 ### Step 5 — Report
 
-Technique captured, how many viewports, what to drag or change first, how it
-landed (finalize, curl or file path) and what the landing's measure report
-says about it, any fidelity compromises (stripped decoration, unsupported
-features, source ambiguities), and any drift found in Step 0.
+Technique captured, how many pages and viewports, what to drag or change
+first, which files you wrote (the finalize names them) and what the
+finalize, `measure` and `lint` said about them, any fidelity compromises (stripped decoration, unsupported features,
+source ambiguities), and any drift found in Step 0.
 <!-- workflow:end -->
 
 ## Degraded inputs
@@ -221,4 +221,4 @@ features, source ambiguities), and any drift found in Step 0.
 - The technique depends on runtime behavior Daydream cannot show (JS-driven
   layout, scroll-driven animation): transcribe the static skeleton and say
   what is lost in your reply.
-- No canvas connected and no host: land as a file and say why.
+- No canvas connected and no host: write the files and say why.
