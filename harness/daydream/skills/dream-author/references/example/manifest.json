@@ -1,0 +1,12 @@
+{
+  "id": "daydream.example",
+  "name": "Example",
+  "version": "0.1.0",
+  "api": "1.2",
+  "contributes": {
+    "panels": ["example"],
+    "overlays": ["tag-badge"],
+    "commands": ["daydream.example.toggle-badge"],
+    "shortcuts": { "Mod+Shift+E": "daydream.example.toggle-badge" }
+  }
+}

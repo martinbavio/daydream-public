@@ -1,6 +1,6 @@
 ---
 name: dream-author
-description: Author a playable page for Daydream — an html file (and its stylesheet) in the open project, shown on the user's canvas — or refine and rework a viewport already on the canvas. Use whenever the user shares layout source material (a URL, article, or CSS snippet), asks to transcribe or replicate a technique into their project, names a pattern to play with ("Holy Grail layout", "RAM pattern"), asks for a layout playground built from scratch ("make me a three-column grid to poke at"), wants a design they have open in Paper turned into something editable, asks to change, fix or rework a viewport that is already open, or asks to have a viewport on the canvas explained ("what makes this layout work?") — even if they don't say "page" or "Daydream".
+description: Author a playable page for Daydream — an html file (and its stylesheet) in the open project, shown on the user's canvas — or refine and rework a viewport already on the canvas. Use whenever the user shares layout source material (a URL, article, or CSS snippet), asks to transcribe or replicate a technique into their project, names a pattern to play with ("Holy Grail layout", "RAM pattern"), asks for a layout playground built from scratch ("make me a three-column grid to poke at"), wants a design they have open in Paper turned into something editable, asks to change, fix or rework a viewport that is already open, or asks to have a viewport on the canvas explained ("what makes this layout work?") — even if they don't say "page" or "Daydream". Also use when the user wants Daydream itself extended with a plugin: a new panel, something drawn over the canvas, a canvas item kind, a lint gate, a command or an MCP tool.
 ---
 
 # dream-author
@@ -31,6 +31,16 @@ client with no skills gets the same steps. The format rules are core's
 connection), the gates are the enabled plugins', and the layout
 procedures are a lint plugin's, served through the knowledge tools while
 it is on. Nothing here restates any of them.
+
+## Writing a plugin instead
+
+If the user wants Daydream itself to gain something (a panel, an overlay,
+an item kind, a gate, a command, a tool) and not a page, read
+`references/plugins.md` beside this file and follow it: it points at the
+authoring doc, the plugin API's types, a worked example and a template
+that builds, all shipped with the install. In a Daydream checkout read
+`docs/plugin-authoring.md` and `packages/plugin-api/` instead. Everything
+below is for pages.
 
 ## Check first
 
