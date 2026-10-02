@@ -54,8 +54,9 @@ export interface DreamPageEntry {
  * One item on the canvas (decision #48). The ENVELOPE — id, kind,
  * position, frame — is core's: selection, drag-move, the resize handles,
  * the geometry cache and undo operate on it without knowing the kind. The
- * PAYLOAD is the kind's alone: only its renderer and its validator
- * (src/core/kinds.ts) understand it, and an item whose kind nothing
+ * PAYLOAD is the kind's alone: only its renderer and its validator (a
+ * plugin's registration; the viewport's is src/core/viewportKind.ts)
+ * understand it, and an item whose kind nothing
  * registered is preserved verbatim through load and save and rendered as a
  * placeholder frame — a document must never lose data because a kind was
  * missing.

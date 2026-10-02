@@ -141,6 +141,12 @@ neighborhood of the task.
   user said "all of it". Keep the source's at-rules (`@media`,
   `@container`, `@supports`) verbatim, record the URL as `sourceUrl`,
   and skip `canvas_state` — the kernel picks free space for the draft.
+  Copying a live site is a transcription of ALL its styles, not of the
+  desktop render: read every stylesheet the page links (and its inline
+  `<style>`), list its `@media` / `@container` breakpoints, and carry
+  each rule over before you call the copy done — a copy with the desktop
+  rules only is unfinished. Then check the layout at each breakpoint's
+  width, not just the widest.
 - **From intent.** No source, no `sourceUrl`, no `canvas_state`. Pick the
   smallest document in which the idea is manipulable: which knob is the
   point, what to drag first, what should visibly break. Tell the user in

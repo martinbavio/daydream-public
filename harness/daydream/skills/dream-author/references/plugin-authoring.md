@@ -168,7 +168,15 @@ does not declare throws, so the declaration and the code cannot drift.
 | `commands`  | `string[]`                 | `dd.registerCommand({ id })` must be listed, and every id starts with `<pluginId>.`   |
 | `shortcuts` | `Record<keys, commandId>`  | each key must parse as a chord; each value must be one of THIS plugin's command ids   |
 | `gates`     | `string[]`                 | `dd.registerGate({ id })` must be listed — bare ids, no prefix                        |
-| `tools`     | `string[]`                 | `dd.registerTool({ name })` and a host part's `registerTool` must be listed           |
+| `tools`     | `string[]`                 | `dd.registerTool({ name })` and a host part's `registerTool` must be listed; each name matches `^[A-Za-z0-9_-]{1,64}$` and is no core tool's |
+
+Every name these keys list is judged when the plugin is admitted — a
+command id in your namespace, a tool name under the protocol's grammar
+and no core tool's, an item kind of your own (§5.8), a prompt under no
+core prompt's — so a malformed one refuses the whole plugin with its
+reason, before any of it runs, and the plugins page shows that reason
+on its tile as it shows a version's (§9); registration then asks only
+whether a name is listed.
 
 `shortcuts` is a DECLARATION, not a binding: the entry still calls
 `dd.bindShortcut`. Declaring it is what lets a future command palette and
@@ -178,7 +186,7 @@ Four keys are HOST-SIDE — read by the dev-server host, never by the page:
 
 | Key            | Type     | Effect while the plugin is enabled                                                                                 |
 | -------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| `prompts`      | `string[]` | names the host part may register as MCP prompts                                                                    |
+| `prompts`      | `string[]` | names the host part may register as MCP prompts — never `dream-author`, the kernel's own                            |
 | `resources`    | `string[]` | names the host part may register as MCP resources                                                                  |
 | `instructions` | string   | appended to the MCP server instructions under the plugin's name, read at connect time (a toggle applies next connect) |
 | `knowledge`    | string   | plugin-relative folder of frontmattered markdown the core `knowledge_*` tools serve as `<pluginId>/<file>`           |
@@ -1355,10 +1363,10 @@ The name may not be a core tool's (`canvas_url`, `canvas_state`,
 `remove_item`, the eight `draft_*` tools — `draft_open`, `draft_append`,
 `draft_replace`, `draft_remove`, `draft_edit`, `draft_set`,
 `draft_finalize`, `draft_discard` — `resolve_variant`, and the four
-`knowledge_*` tools), and only
-one live tool may hold a name across all plugins — collisions are refused
-at registration, never shadowed at connect time. `inputSchema` is JSON
-Schema and MUST be an object schema (`type: "object"`); the bridge
+`knowledge_*` tools) — a manifest declaring one is refused, plugin and
+all — and only one live tool may hold a name across all plugins —
+collisions are refused at registration, never shadowed at connect
+time. `inputSchema` is JSON Schema and MUST be an object schema (`type: "object"`); the bridge
 validates every call against it before `run` sees the input (`$ref`,
 `$defs` and `not` are not converted — keep the schema flat). A returned
 object becomes the call's structured content and its text; a string is the
@@ -1375,8 +1383,8 @@ ship a host part: a file beside the manifest default-exporting
 | Member                              | Contract                                                                                                    |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | `host.plugin`                       | `{ id, dir, dataFile, manifest }` — `dir` is the absolute folder, how a host part finds its own assets without `import.meta`; `dataFile` the absolute path of the plugin's storage file (what the browser part's `dd.storage` writes, `<project>/.daydream/plugin-data/<id>.json`), for naming it to an agent — it names the file in the project open when you read it, so read it when you need it; it is `null` while no project is open, and the file may not exist before the first write. |
-| `host.registerTool(registration)`   | An MCP tool: `{ name, title, description, inputSchema, annotations?, run }` where `inputSchema` is a zod RAW SHAPE (`{ id: z.string() }`), `annotations` the same `ToolAnnotations` a browser tool declares, and `run` returns `{ text, structured?, isError? }`. |
-| `host.registerPrompt(registration)` | An MCP prompt: `{ name, title, description, argsSchema?, build }`; arguments are zod STRING schemas (the protocol's rule), and `build` is read at request time. The name may not be `dream-author`, the kernel's own workflow prompt (refused at registration). |
+| `host.registerTool(registration)`   | An MCP tool: `{ name, title, description, inputSchema, annotations?, run }` where `inputSchema` is a zod RAW SHAPE (`{ id: z.string() }`), `annotations` the same `ToolAnnotations` a browser tool declares, and `run` returns `{ text, structured?, isError? }`. The name takes a browser tool's grammar, `^[A-Za-z0-9_-]{1,64}$`, and no core tool's (a manifest declaring another is refused). |
+| `host.registerPrompt(registration)` | An MCP prompt: `{ name, title, description, argsSchema?, build }`; arguments are zod STRING schemas (the protocol's rule), and `build` is read at request time. The name may not be `dream-author`, the kernel's own workflow prompt (a manifest declaring it is refused). |
 | `host.registerResource(registration)` | One document at a fixed URI: `{ uri, name, title?, description?, mimeType, read }`.                          |
 | `host.instructions(text)`           | Replace the manifest's `contributes.instructions` for guidance that needs a file or a computation.             |
 | `host.knowledgeDir(path)`           | Declare (or move) the knowledge folder the core knowledge tools serve, plugin-relative (the folder's contract is below). |
@@ -1753,8 +1761,8 @@ reach into the kernel on a plugin's behalf. Add it as a `devDependency`.
 | Export                              | What it gives you                                                                                                       |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `coreApi()`                         | `dd.core` alone — no kernel, no store. For pure-function tests; its `parsePage` and `uniqueSelector` need the browser project. |
-| `createTestKernel(options?)`        | `{ dd, store, registry, commands, host, dispose }`: a real API object for a synthetic instance. Options: `project` (a `LoadedProject`: the document, its pages and the project; `testProject` builds one), `manifest`, `host`. |
-| `mountPlugin(options)`              | The LOADER SEAM: the real Shell with your plugin enabled by config and activated through the real loader. Browser only.      |
+| `createTestKernel(options?)`        | `{ dd, store, registry, commands, host, dispose }`: a real API object for a synthetic instance. Options: `project` (a `LoadedProject`: the document, its pages and the project; `testProject` builds one), `manifest`, `host`. The manifest is admitted as `mountPlugin`'s is, so one the runtime refuses — a name it may not declare, an API this Daydream does not have — throws the reason instead of making a kernel. |
+| `mountPlugin(options)`              | The LOADER SEAM: the real Shell with your plugin enabled by config and activated through the real loader, found where the runtime would find it — a `daydream.` id in the repo's `plugins/`, any other in your user folder, trusted — so the origin rules apply as they will (`unstable` is yours to set, a first-party plugin's not). A plugin admission refuses rejects the mount at once with the reason. Browser only. |
 | `mountShell(options?)`              | The whole app, with whatever plugins the test names — what `mountPlugin` is sugar over. Each mount starts from a fresh workspace (no remembered panel layout or camera); `keepWorkspace: true` keeps it, for a test of that memory. Browser only. |
 | `forgetWorkspaces()`                | Forget every remembered panel layout and camera, as a mount does by default.                                                |
 | `mountPanels(kernel)`               | The real panel layer over a test kernel's panels, without the canvas. Async: `await` it for `{ host, dispose }`. Browser only. |
@@ -1764,9 +1772,10 @@ reach into the kernel on a plugin's behalf. Add it as a `devDependency`.
 | `pageShadow(itemId)`, `pageNode(itemId, selector)`, `pageElementId(itemId, selector)` | The shadow root a mounted page renders in, the element a selector names there, and the render-time id the store selects it by — null until the page has mounted. |
 | `fakeProjectHost(options?)`         | `{ host, stored, made }`: a host whose project copies a dropped file (`assets/dropped-<n>`, an image or a video only; `options.storeAsset` answers otherwise) and makes a page (`dd.createPage`, named as the host names one, with no sheets) in memory, recording each in `stored` (a refused file not) and `made`; its `read` rejects, so `loadOpenProject` fails over it. For a drop or a paste without a real host; a test of the host's own naming, downloads or sheets opens a real project. |
 | `loadOpenProject()`                 | The project session's load of the host's open project, as a start and the mark's picker run it — for a test of a `leave` handler. Needs a host with the project capability (`overrideHostForTests`). Browser only. |
-| `createFileHost(files?, options?)`, `FileHost`, `FileRequest` | The host's files routes faked at HTTP over a folder in memory (path → text, a leading `\ufeff` a byte order mark), answered as the host answers them — a write lands only over the hash it names (`null`: no file yet), else a 409 in the host's words sent with `code: "file-changed"` (`FILE_CHANGED_CODE`), and one to a file made a link a 409 with `code: "file-unwritable"` (`FILE_UNWRITABLE_CODE`), and one `refuse`d answered the status and sentence given — for `overrideHostForTests({ project: host.project })`: `requests`, `writes()`, `text(path)`, `files()`, `change(path, text)` behind the tab (text, bytes in another encoding, or `null` to remove it), `link(path)`, `refuse(path, status, error, code?)`, `failNext(method, path)`, `hold()`, `openAnother(root, files)` (the host opens another project in this one's place: those files now, none a link, refused or failing); each request records the project it named (`project`). It serves one project, `options.root` (`TEST_PROJECT`'s by default; `null` serves any, for a host that holds one project and then another under the same tab), and refuses every request naming another, a read too, with the host's 409 with no code. `options.project` is what its `read` answers. Asserts which file received which text, byte for byte. |
+| `createFileHost(files?, options?)`, `FileHost`, `FileRequest` | The host's files routes faked at HTTP over a folder in memory (path → text, a leading `\ufeff` a byte order mark), answered as the host answers them — a write lands only over the hash it names (`null`: no file yet), else a 409 in the host's words sent with `code: "file-changed"` (`FILE_CHANGED_CODE`), and one to a file made a link, a folder, or under a file, a 409 with `code: "file-unwritable"` (`FILE_UNWRITABLE_CODE`), one naming bytes no UTF-8 reads by their hash a 422, `.git` and `.daydream` neither read nor written and `daydream.json` not written, and one `refuse`d answered the status and sentence given — for `overrideHostForTests({ project: host.project })`: `requests`, `writes()`, `text(path)`, `files()`, `change(path, text)` behind the tab (text, bytes in another encoding, or `null` to remove it), `link(path)`, `refuse(path, status, error, code?)`, `failNext(method, path)`, `hold()`, `openAnother(root, files)` (the host opens another project in this one's place: those files now, none a link, refused or failing); each request records the project it named (`project`). It serves one project, `options.root` (`TEST_PROJECT`'s by default; `null` serves any, for a host that holds one project and then another under the same tab), and refuses every request naming another, a read too, with the host's 409 with no code. `options.project` is what its `read` answers. Asserts which file received which text, byte for byte. That it answers as the host does is proven against the host's own routes, one table run against both, in the kernel's tests. |
 | `gateContext({ page, viewportIds? })` | A gate's `GateContext` as core builds it, for a test that calls a gate's `run` itself: `page` is `ctx.page`, and `ctx.measure` and `ctx.mountViewport` are core's live measurer and mount showing each viewport's page as `page` answers it — so a test can judge a page the project does not hold, as a finalize does (a new page, a rework as it will be written). Its mounts live as long as the test, as a gate's live as long as its run: one the gate leaves open is disposed when the test finishes, and one asked for after is refused. Never `{ measure: kernel.dd.measure, mountViewport: kernel.dd.mountViewport }`: those see the project as it is. Browser only for the measure and the mount. |
-| `unusedProjectFiles`                | The file members (`readFile`, `writeFile`, `deleteFile`) of a test's own fake host project, each rejecting as the test's mistake. |
+| `unusedProject`                     | A host project every member of which rejects as the test's mistake: the base a test's own fake host project is made on, with what it uses put over it (`{ ...unusedProject, saveManifest }`) — a host project has no optional member. |
+| `unusedProjectFiles`                | `unusedProject`'s file members (`readFile`, `readPage`, `writeFile`, `deleteFile`). |
 | `createPageItem(texts, init?)`, `testProject(entries, init?)`, `TEST_PROJECT`, `fixturePage(project)`, `PAGE_FIXTURE_HTML`, `PAGE_FIXTURE_CSS`, `viewportItems`, `flush` | Building a viewport and its page, a project of them, the project a test's document belongs to, the fixture's viewport, its two texts, the typed viewport list, and Solid's flush for assertions after a write. |
 
 `mountPlugin` returns `{ host, store, pluginHost, kernel, framed, panel(pluginId?), overlay(pluginId?), dispose() }`
